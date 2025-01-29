@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import * as core from '@actions/core';
 import { mkdirp } from 'mkdirp';
-import { type FeedEntry, FeedData, read } from '@extractus/feed-extractor';
+import { type FeedEntry, FeedData, extract } from '@extractus/feed-extractor';
 import crypto from 'crypto';
 import Handlebars from 'handlebars';
 import { AtpAgent, RichText } from '@atproto/api';
@@ -120,7 +120,7 @@ async function filterCachedItems(rss: FeedEntry[], cache: string[]): Promise<Fee
 async function getRss(rssFeed: string): Promise<FeedData | undefined> {
   let rss: FeedData;
   try {
-    rss = <FeedData>(await read(rssFeed));
+    rss = <FeedData>(await extract(rssFeed));
     core.debug(JSON.stringify(`Pre-filter feed items:\n\n${JSON.stringify(rss.entries, null, 2)}`));
     return rss;
   } catch (e) {
