@@ -1,0 +1,42 @@
+name: 'Feed to Bluesky'
+author: 'joschi'
+description: 'Push ATOM/RSS feed updates to Bluesky via GitHub Actions'
+branding:
+  icon: 'rss'
+  color: 'orange'
+inputs:
+  rss-feed:
+    description: 'RSS feed URL'
+    required: true
+  template:
+    description: 'Template of status posted to Bluesky (Handlebars)'
+    required: true
+    default: '{{item.title}} {{item.link}}'
+  service-url:
+    description: 'Bluesky service URL (optional)'
+    required: true
+    default: 'https://bsky.social'
+  username:
+    description: 'Bluesky username (example: username.bsky.social)'
+    required: true
+  password:
+    description: 'Bluesky app password'
+    required: true
+  cache-file:
+    description: 'Cache file'
+    required: true
+  cache-limit:
+    description: 'Cache limit'
+    required: false
+    default: '100'
+  dry-run:
+    description: 'Only fetch RSS feed and update cache but skip posting to Bluesky'
+    required: false
+    default: 'false'
+  disable-facets:
+    description: 'Disable automatic detection of rich text facets'
+    required: false
+    default: false
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

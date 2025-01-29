@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rss version="2.0">
+  <channel>
+    <link>https://raw.githubusercontent.com/joschi/blueskyfeedbot/main/tests/simple.rss</link>
+    <title>Channel Title</title>
+    <description>Channel description.</description>
+    <managingEditor>joe.user@example.com (Managing Editor)</managingEditor>
+    <lastBuildDate>Tue, 27 Dec 2022 07:17:21 +0000</lastBuildDate>
+    <pubDate>Tue, 27 Dec 2022 07:17:21 +0000</pubDate>
+    <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+    <image>
+      <url>https://avatars.githubusercontent.com/u/43951</url>
+      <link>https://raw.githubusercontent.com/joschi/blueskyfeedbot/main/tests/simple.rss</link>
+      <title>Image Title</title>
+      <description>Image description.</description>
+    </image>
+    <item>
+      <link>https://github.com/joschi/blueskyfeedbot/pull/1</link>
+      <guid isPermaLink="false">44aefc891f5b1f96ae7393f3d1613254eae9c23b</guid>
+      <title>Item 1 Title</title>
+      <description>Item 1 Description</description>
+      <pubDate>Thu, 15 Dec 2022 19:02:13 +0000</pubDate>
+      <category>item1:category</category>
+      <author>author.item1@example.com (Author Item 1)</author>
+    </item>
+    <item>
+      <link>https://github.com/joschi/blueskyfeedbot/pull/2</link>
+      <guid isPermaLink="false">55a26da9618a994e56c845306bd38641f58220af</guid>
+      <title>Item 2 Title</title>
+      <description>Item 2 Description</description>
+      <pubDate>Tue, 27 Dec 2022 19:02:13 +0000</pubDate>
+      <category>item2:category</category>
+      <author>author.item2@example.com (Author Item 2)</author>
+    </item>
+  </channel>
+</rss>

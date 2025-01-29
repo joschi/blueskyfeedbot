@@ -1,0 +1,110 @@
+name: Integration tests
+on:
+  push:
+jobs:
+  simple:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate cache key
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        id: generate-key
+        with:
+          script: |
+            core.setOutput('cache-key', new Date().valueOf())
+      - name: Retrieve cache
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+        with:
+          path: ${{ github.workspace }}/blueskyfeedbot
+          key: feed-cache-${{ steps.generate-key.outputs.cache-key }}
+          restore-keys: feed-cache-
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run action
+        uses: './'
+        with:
+          # This is the RSS feed you want to publish
+          rss-feed: 'https://githubraw.com/joschi/blueskyfeedbot/main/tests/simple.xml'
+          dry-run: false
+          # This is the Bluesky username
+          username: ${{ secrets.BLUESKY_USERNAME }}
+          # This is the app password you created earlier
+          password: ${{ secrets.BLUESKY_PASSWORD }}
+          # This is a path to the cache file, using the above cache path
+          cache-file: ${{ github.workspace }}/blueskyfeedbot/cache.json
+
+  simple-without-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run action
+        uses: './'
+        with:
+          # This is the RSS feed you want to publish
+          rss-feed: 'https://githubraw.com/joschi/blueskyfeedbot/main/tests/simple-no-cache.xml'
+          dry-run: false
+          # This is the Bluesky username
+          username: ${{ secrets.BLUESKY_USERNAME }}
+          # This is the app password you created earlier
+          password: ${{ secrets.BLUESKY_PASSWORD }}
+          # This is a path to the cache file, using the above cache path
+          cache-file: ${{ github.workspace }}/blueskyfeedbot/cache.json
+
+  simple-dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run action
+        uses: './'
+        with:
+          # This is the RSS feed you want to publish
+          rss-feed: 'https://githubraw.com/joschi/blueskyfeedbot/main/tests/simple.xml'
+          dry-run: true
+          # This is the Bluesky username
+          username: ${{ secrets.BLUESKY_USERNAME }}
+          # This is the app password you created earlier
+          password: ${{ secrets.BLUESKY_PASSWORD }}
+          # This is a path to the cache file, using the above cache path
+          cache-file: ${{ github.workspace }}/blueskyfeedbot/cache.json
+
+  simple-disable-facets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run action
+        uses: './'
+        with:
+          # This is the RSS feed you want to publish
+          rss-feed: 'https://githubraw.com/joschi/blueskyfeedbot/main/tests/simple.xml'
+          # Disable auto-detection of rich text facets
+          disable-facets: true
+          # This is the Bluesky username
+          username: ${{ secrets.BLUESKY_USERNAME }}
+          # This is the app password you created earlier
+          password: ${{ secrets.BLUESKY_PASSWORD }}
+          # This is a path to the cache file, using the above cache path
+          cache-file: ${{ github.workspace }}/blueskyfeedbot/cache.json
+
+  simple-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run action
+        uses: './'
+        with:
+          # This is the RSS feed you want to publish
+          rss-feed: 'https://githubraw.com/joschi/blueskyfeedbot/main/tests/simple-template.xml'
+          # Template of status posted to Bluesky (Handlebars)
+          template: |
+            {{feedData.title}}: {{item.title}}
+
+            {{item.link}}
+          # This is the Bluesky username
+          username: ${{ secrets.BLUESKY_USERNAME }}
+          # This is the app password you created earlier
+          password: ${{ secrets.BLUESKY_PASSWORD }}
+          # This is a path to the cache file, using the above cache path
+          cache-file: ${{ github.workspace }}/blueskyfeedbot/cache.json
