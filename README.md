@@ -39,7 +39,7 @@ Blueskyfeedbot is a bot that posts RSS feeds to Bluesky via GitHub Actions.
               key: feed-cache-${{ steps.generate-key.outputs.cache-key }}
               restore-keys: feed-cache-
           - name: GitHub
-            uses: 'joschi/blueskyfeedbot@v1'
+            uses: 'joschi/blueskyfeedbot@v0.0.2'
             with:
               # This is the RSS feed you want to publish
               rss-feed: https://www.githubstatus.com/history.rss
