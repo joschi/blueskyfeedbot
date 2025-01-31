@@ -21,7 +21,10 @@ Blueskyfeedbot is a bot that posts RSS feeds to Bluesky via GitHub Actions.
     on:
       schedule:
         # This will run every five minutes. Alter it using https://crontab.guru/.
-        - cron: '*/5 * * * *'  
+        - cron: '*/5 * * * *'
+      workflow_dispatch: # This allows manually running the workflow from the GitHub actions page
+    concurrency:
+      group: feedbot
     jobs:
       rss-to-bluesky:
         runs-on: ubuntu-latest
