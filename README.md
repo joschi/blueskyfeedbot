@@ -1,6 +1,6 @@
-# Blueskyfeedbot
+# Bluesky Feed Bot
 
-Blueskyfeedbot is a bot that posts RSS feeds to Bluesky via GitHub Actions.
+Bluesky Feed Bot is a GitHub Action for posting RSS feeds to Bluesky via GitHub Actions workflows.
 
 ## Usage
 
@@ -14,7 +14,7 @@ Blueskyfeedbot is a bot that posts RSS feeds to Bluesky via GitHub Actions.
 2. Create a new GitHub repository.
 3. Go to your repository settings at `https://github.com/${YOUR_REPO}/settings/secrets/actions/new`, and add a new
    secret with the value of the access token.
-4.  Add a file named `.github/workflows/blueskyfeedbot.yml` with the following content:
+4. Add a file named `.github/workflows/blueskyfeedbot.yml` with the following content:
 
     ```yaml
     name: FeedBot
@@ -42,12 +42,15 @@ Blueskyfeedbot is a bot that posts RSS feeds to Bluesky via GitHub Actions.
               key: feed-cache-${{ steps.generate-key.outputs.cache-key }}
               restore-keys: feed-cache-
           - name: GitHub
-            uses: 'joschi/blueskyfeedbot@v0.0.2'
+            uses: 'joschi/blueskyfeedbot@v1'
             with:
               # This is the RSS feed you want to publish
               rss-feed: https://www.githubstatus.com/history.rss
               # Template of status posted to Bluesky (Handlebars)
-              template: '{{item.title}} {{item.link}}'
+              template: |
+                {{item.title}}
+    
+                {{item.link}}
               # This is your service URL (optional)
               service-url: https://bsky.social
               # This is the Bluesky username (example: username.bsky.social)
@@ -56,6 +59,8 @@ Blueskyfeedbot is a bot that posts RSS feeds to Bluesky via GitHub Actions.
               password: ${{ secrets.BLUESKY_PASSWORD }}
               # This is a path to the cache file, using the above cache path
               cache-file: ${{ github.workspace }}/blueskyfeedbot/cache.json
+              # The maximum number of posts created on the first run
+              initial-post-limit: 10
     ```
 
 5. Commit and publish your changes.
