@@ -27,16 +27,17 @@ inputs:
     required: true
   cache-limit:
     description: 'Cache limit'
-    required: false
     default: '100'
+  initial-post-limit:
+    description: 'The maximum number of posts created on the first run, if no cache file exists (default: unlimited)'
+  post-limit:
+    description: 'The maximum number of posts created per run (default: unlimited)'
   dry-run:
     description: 'Only fetch RSS feed and update cache but skip posting to Bluesky'
-    required: false
     default: 'false'
   disable-facets:
     description: 'Disable automatic detection of rich text facets'
-    required: false
-    default: false
+    default: 'false'
 runs:
   using: 'node20'
   main: 'dist/index.js'

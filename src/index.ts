@@ -1,4 +1,5 @@
 import { readFile, writeFile } from 'fs/promises';
+import { existsSync } from 'node:fs';
 import * as core from '@actions/core';
 import { mkdirp } from 'mkdirp';
 import { type FeedEntry, FeedData, extract } from '@extractus/feed-extractor';
@@ -38,7 +39,8 @@ async function postItems(
   statusTemplate: HandlebarsTemplateDelegate,
   dryRun: boolean,
   disableFacets: boolean,
-  cache: string[]) {
+  cache: string[],
+  limit: number) {
   if (dryRun) {
     // Add new items to cache
     for (const item of entries) {
@@ -72,31 +74,38 @@ async function postItems(
   }
 
   // post the new items
+  let postedItems: number = 0;
   for (const item of entries) {
     try {
       const hash = sha256(<string>item.link);
-      core.debug(`Posting ${item.title} with hash ${hash}`);
+      core.debug(`Posting '${item.title}' with hash ${hash}`);
 
-      // post the item
-      const lang = feedData?.language;
-      const rt = new RichText({
-        text: statusTemplate({ feedData, item })
-      });
-      if (!disableFacets) {
-        await rt.detectFacets(agent);
+      if (postedItems >= limit) {
+        core.debug(`Skipping '${item.title}' with hash ${hash} due to post limit ${limit}`);
+      } else {
+        // post the item
+        const lang = feedData?.language;
+        const rt = new RichText({
+          text: statusTemplate({ feedData, item })
+        });
+        if (!disableFacets) {
+          await rt.detectFacets(agent);
+        }
+        core.debug(`RichText:\n\n${JSON.stringify(rt, null, 2)}`);
+
+        const record: AppBskyFeedPost.Record = {
+          text: rt.text,
+          facets: rt.facets,
+          createdAt: new Date().toISOString(),
+          ...(lang && { langs: [lang] })
+        };
+        core.debug(`Record:\n\n${JSON.stringify(record, null, 2)}`);
+
+        const res = await agent.post(record);
+        core.debug(`Response:\n\n${JSON.stringify(res, null, 2)}`);
+
+        postedItems++;
       }
-      core.debug(`RichText:\n\n${JSON.stringify(rt, null, 2)}`);
-
-      const record: AppBskyFeedPost.Record = {
-        text: rt.text,
-        facets: rt.facets,
-        createdAt: new Date().toISOString(),
-        ...(lang && { langs: [lang] })
-      };
-      core.debug(`Record:\n\n${JSON.stringify(record, null, 2)}`);
-
-      const res = await agent.post(record);
-      core.debug(`Response:\n\n${JSON.stringify(res, null, 2)}`);
 
       // add the item to the cache
       cache.push(hash);
@@ -108,10 +117,12 @@ async function postItems(
 
 async function filterCachedItems(rss: FeedEntry[], cache: string[]): Promise<FeedEntry[]> {
   if (cache.length) {
-    rss = rss?.filter(item => {
-      const hash = sha256(<string>item.link);
-      return !cache.includes(hash);
-    });
+    rss = rss
+      ?.filter(item => {
+        const hash = sha256(<string>item.link);
+        return !cache.includes(hash);
+      })
+      ?.sort((a, b) => a.published?.localeCompare(b.published || '') || NaN);
   }
   core.debug(JSON.stringify(`Post-filter feed items:\n\n${JSON.stringify(rss, null, 2)}`));
   return rss;
@@ -144,7 +155,7 @@ export async function main(): Promise<void> {
   // get variables from environment
   const rssFeed = core.getInput('rss-feed', { required: true });
   core.debug(`rssFeed: ${rssFeed}`);
-  const template: string = core.getInput('template');
+  const template: string = core.getInput('template', { required: true });
   core.debug(`template: ${template}`);
   const serviceUrl = core.getInput('service-url', { required: true });
   core.debug(`serviceUrl: ${serviceUrl}`);
@@ -152,28 +163,56 @@ export async function main(): Promise<void> {
   core.debug(`username: ${username}`);
   const password = core.getInput('password', { required: true });
   core.debug(`password: ${password}`);
-  const cacheFile = core.getInput('cache-file');
+  const cacheFile = core.getInput('cache-file', { required: true });
   core.debug(`cacheFile: ${cacheFile}`);
   const cacheLimit = parseInt(core.getInput('cache-limit'), 10);
   core.debug(`cacheLimit: ${cacheLimit}`);
+  const initialPostLimit = parseInt(core.getInput('initial-post-limit'), 10);
+  core.debug(`initialPostLimit: ${initialPostLimit}`);
+  const postLimit = parseInt(core.getInput('post-limit'), 10);
+  core.debug(`postLimit: ${postLimit}`);
   const dryRun: boolean = core.getBooleanInput('dry-run');
   core.debug(`dryRun: ${dryRun}`);
   const disableFacets = core.getBooleanInput('disable-facets');
   core.debug(`disableFacets: ${disableFacets}`);
 
+  if (initialPostLimit > cacheLimit) {
+    core.warning('initial-post-limit is greater than cache-limit, this might lead to unexpected results');
+  }
+  if (postLimit > cacheLimit) {
+    core.warning('post-limit is greater than cache-limit, this might lead to unexpected results');
+  }
+
   // get the rss feed
   const feedData: FeedData | undefined = await getRss(rssFeed);
   const entries: FeedEntry[] = feedData?.entries ?? [];
 
+  let limit: number = postLimit;
+  let cache: string[] = [];
+
   // get the cache
-  const cache = await getCache(cacheFile);
+  if (!existsSync(cacheFile)) {
+    limit = initialPostLimit;
+  } else {
+    cache = await getCache(cacheFile);
+  }
 
   // filter out the cached items
   const filteredEntries: FeedEntry[] = await filterCachedItems(entries, cache);
 
   // post the new items
   const statusTemplate = Handlebars.compile(template);
-  await postItems(serviceUrl, username, password, feedData, filteredEntries, statusTemplate, dryRun, disableFacets, cache);
+  await postItems(
+    serviceUrl,
+    username,
+    password,
+    feedData,
+    filteredEntries,
+    statusTemplate,
+    dryRun,
+    disableFacets,
+    cache,
+    limit);
 
   // write the cache
   await writeCache(cacheFile, cacheLimit, cache);
