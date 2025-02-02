@@ -1,6 +1,6 @@
 {
   "name": "@joschi/blueskyfeedbot",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A bot to syndicate RSS to Bluesky via GitHub Actions",
   "author": "Jochen Schalanda <jochen+blueskyfeedbot@schalanda.name>",
   "license": "MIT",
