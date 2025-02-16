@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
-    "@atproto/api": "^0.13.31",
+    "@atproto/api": "^0.14.0",
     "@extractus/feed-extractor": "^7.0.0",
     "handlebars": "^4.7.7",
     "mkdirp": "^3.0.0"
