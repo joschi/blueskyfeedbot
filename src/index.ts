@@ -85,15 +85,22 @@ async function postItems(
       } else {
         // post the item
         const lang = feedData?.language;
-        const rt = new RichText({
+        let rt = new RichText({
           text: statusTemplate({ feedData, item })
         });
+        if (rt.graphemeLength >= 300) {
+          rt = new RichText({
+            text: rt.unicodeText.slice(0, 300)
+          });
+        }
+
         if (!disableFacets) {
           await rt.detectFacets(agent);
         }
         core.debug(`RichText:\n\n${JSON.stringify(rt, null, 2)}`);
 
         const record: AppBskyFeedPost.Record = {
+          $type: 'app.bsky.feed.post',
           text: rt.text,
           facets: rt.facets,
           createdAt: new Date().toISOString(),
