@@ -32,5 +32,14 @@
       <category>item2:category</category>
       <author>author.item2@example.com (Author Item 2)</author>
     </item>
+    <item>
+      <link>https://github.com/joschi/blueskyfeedbot/pull/2</link>
+      <guid isPermaLink="false">55a26da9618a994e56c845306bd38641f58220af</guid>
+      <title>Lorem ipsum loooooong</title>
+      <description>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet…</description>
+      <pubDate>Tue, 27 Dec 2022 19:02:13 +0000</pubDate>
+      <category>item2:category</category>
+      <author>author.item2@example.com (Author Item 2)</author>
+    </item>
   </channel>
 </rss>
