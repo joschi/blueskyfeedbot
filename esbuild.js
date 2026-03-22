@@ -12,7 +12,7 @@ esbuild
   .build({
     entryPoints: ['./src/index.ts'],
     platform: 'node',
-    target: 'node20',
+    target: 'node24',
     bundle: true,
     plugins: [
       clean({
