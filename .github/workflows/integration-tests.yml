@@ -118,7 +118,7 @@ jobs:
         uses: './'
         with:
           # This is the RSS feed with HTML entities in title and description
-          rss-feed: 'https://githubraw.com/joschi/blueskyfeedbot/main/tests/html-entities.xml'
+          rss-feed: 'https://githubraw.com/joschi/blueskyfeedbot/${{ github.sha }}/tests/html-entities.xml'
           dry-run: true
           # This is the Bluesky username
           username: ${{ secrets.BLUESKY_USERNAME }}
