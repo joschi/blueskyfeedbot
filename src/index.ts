@@ -208,7 +208,7 @@ export async function main(): Promise<void> {
   const filteredEntries: FeedEntry[] = await filterCachedItems(entries, cache);
 
   // post the new items
-  const statusTemplate = Handlebars.compile(template);
+  const statusTemplate = Handlebars.compile(template, { noEscape: true });
   await postItems(
     serviceUrl,
     username,

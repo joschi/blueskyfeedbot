@@ -108,3 +108,21 @@ jobs:
           password: ${{ secrets.BLUESKY_PASSWORD }}
           # This is a path to the cache file, using the above cache path
           cache-file: ${{ github.workspace }}/blueskyfeedbot/cache.json
+
+  simple-html-entities-dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Run action
+        uses: './'
+        with:
+          # This is the RSS feed with HTML entities in title and description
+          rss-feed: 'https://githubraw.com/joschi/blueskyfeedbot/main/tests/html-entities.xml'
+          dry-run: true
+          # This is the Bluesky username
+          username: ${{ secrets.BLUESKY_USERNAME }}
+          # This is the app password you created earlier
+          password: ${{ secrets.BLUESKY_PASSWORD }}
+          # This is a path to the cache file, using the above cache path
+          cache-file: ${{ github.workspace }}/blueskyfeedbot/cache.json
