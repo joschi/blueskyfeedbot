@@ -61,6 +61,8 @@ Bluesky Feed Bot is a GitHub Action for posting RSS feeds to Bluesky via GitHub 
               cache-file: ${{ github.workspace }}/blueskyfeedbot/cache.json
               # The maximum number of posts created on the first run
               initial-post-limit: 10
+              # Maximum number of XML entity expansions allowed when parsing feeds (0 = unlimited)
+              # xml-entity-expansion-limit: 10000
     ```
 
 5. Commit and publish your changes.

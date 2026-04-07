@@ -38,6 +38,9 @@ inputs:
   disable-facets:
     description: 'Disable automatic detection of rich text facets'
     default: 'false'
+  xml-entity-expansion-limit:
+    description: 'Maximum number of XML entity expansions allowed when parsing feeds (0 = unlimited)'
+    default: '10000'
 runs:
   using: 'node24'
   main: 'dist/index.js'
